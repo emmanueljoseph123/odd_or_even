@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Odd or Even Hand Cricket</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Fredoka & Inter for colorful arcade feel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for crisp icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Fredoka', 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      overflow-x: hidden;
+      background-color: #0b1d3a;
+    }
+
+    /* Text stroke and 3D effects for Logo */
+    .stroke-text {
+      -webkit-text-stroke: 2.5px #0a2040;
+      text-stroke: 2.5px #0a2040;
+    }
+    
+    .logo-3d-yellow {
+      color: #ffdd00;
+      text-shadow: 
+        0px 4px 0px #c68a00,
+        0px 8px 0px #855800,
+        0px 10px 15px rgba(0,0,0,0.5);
+    }
+
+    .logo-3d-green {
+      color: #5cf21a;
+      text-shadow: 
+        0px 4px 0px #319e07,
+        0px 8px 0px #1f6602,
+        0px 10px 15px rgba(0,0,0,0.5);
+    }
+
+    .logo-or-badge {
+      background: radial-gradient(circle, #ffffff 40%, #d8e5f5 100%);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.8);
+      border: 3px solid #0f2b5c;
+    }
+
+    /* Glossy 3D Buttons */
+    .btn-3d {
+      transition: all 0.12s ease-in-out;
+      position: relative;
+    }
+    
+    .btn-3d:active {
+      transform: translateY(4px) !important;
+      box-shadow: 0 2px 0px rgba(0,0,0,0.3) !important;
+    }
+
+    .btn-odd {
+      background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+      box-shadow: 0 6px 0px #1e3a8a, 0 10px 15px rgba(0, 0, 0, 0.3);
+      border: 2px solid #60a5fa;
+    }
+
+    .btn-even {
+      background: linear-gradient(180deg, #84cc16 0%, #4d7c0f 100%);
+      box-shadow: 0 6px 0px #365314, 0 10px 15px rgba(0, 0, 0, 0.3);
+      border: 2px solid #a3e635;
+    }
+
+    /* Number Button Gradients */
+    .num-btn-1 { background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 5px 0px #1e3a8a; border: 2px solid #93c5fd; }
+    .num-btn-2 { background: linear-gradient(180deg, #22c55e 0%, #15803d 100%); box-shadow: 0 5px 0px #14532d; border: 2px solid #86efac; }
+    .num-btn-3 { background: linear-gradient(180deg, #eab308 0%, #a16207 100%); box-shadow: 0 5px 0px #713f12; border: 2px solid #fef08a; }
+    .num-btn-4 { background: linear-gradient(180deg, #f97316 0%, #c2410c 100%); box-shadow: 0 5px 0px #7c2d12; border: 2px solid #fed7aa; }
+    .num-btn-5 { background: linear-gradient(180deg, #a855f7 0%, #7e22ce 100%); box-shadow: 0 5px 0px #581c87; border: 2px solid #e9d5ff; }
+    .num-btn-6 { background: linear-gradient(180deg, #ec4899 0%, #be185d 100%); box-shadow: 0 5px 0px #831843; border: 2px solid #fbcfe8; }
+
+    /* Scoreboard Capsule Shadow */
+    .score-capsule {
+      background: linear-gradient(180deg, #0e214d 0%, #081433 100%);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      border: 2px solid #1e3a8a;
+    }
+
+    /* Floating Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    
+    .floating-logo {
+      animation: floatSlow 4s ease-in-out infinite;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      70% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .pop-in {
+      animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    /* Hand throw reveal animation */
+    @keyframes throwHand {
+      0% { transform: translateY(40px) scale(0.5); opacity: 0; }
+      60% { transform: translateY(-10px) scale(1.1); opacity: 1; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .hand-throw {
+      animation: throwHand 0.4s ease-out forwards;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+  </style>
+</head>
+<body class="min-h-screen w-full relative flex flex-col justify-between items-center select-none overflow-hidden">
+
+  <!-- STADIUM BACKGROUND SVG CANVAS -->
+  <div class="absolute inset-0 w-full h-full pointer-events-none z-0">
+    <svg class="w-full h-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Sky Gradient -->
+        <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#2a7be4" />
+          <stop offset="45%" stop-color="#51a3f8" />
+          <stop offset="70%" stop-color="#8bc2ff" />
+          <stop offset="100%" stop-color="#bce0ff" />
+        </linearGradient>
+
+        <!-- Grass Gradient -->
+        <linearGradient id="grassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#55c11f" />
+          <stop offset="50%" stop-color="#3fa711" />
+          <stop offset="100%" stop-color="#2a7e08" />
+        </linearGradient>
+
+        <!-- Pitch Clay Gradient -->
+        <linearGradient id="pitchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#dca96d" />
+          <stop offset="50%" stop-color="#cb9352" />
+          <stop offset="100%" stop-color="#ad7537" />
+        </linearGradient>
+
+        <!-- Stumps Wooden Gradient -->
+        <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f8e08d" />
+          <stop offset="50%" stop-color="#e2b947" />
+          <stop offset="100%" stop-color="#ba8e26" />
+        </linearGradient>
+
+        <!-- Ball Gradient -->
+        <radialGradient id="ballGrad" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#ff6b6b" />
+          <stop offset="40%" stop-color="#d91414" />
+          <stop offset="85%" stop-color="#800202" />
+          <stop offset="100%" stop-color="#400000" />
+        </radialGradient>
+
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="6" flood-opacity="0.3"/>
+        </filter>
+      </defs>
+
+      <!-- Sky Background -->
+      <rect width="1200" height="480" fill="url(#skyGrad)" />
+
+      <!-- Clouds -->
+      <path d="M 100,120 Q 130,80 180,90 Q 220,70 260,100 Q 300,80 340,110 Q 370,120 380,140 Z" fill="#ffffff" opacity="0.8" />
+      <path d="M 800,100 Q 830,60 880,70 Q 920,50 960,80 Q 1000,60 1040,90 Q 1070,100 1080,120 Z" fill="#ffffff" opacity="0.75" />
+      <path d="M 500,80 Q 530,50 570,60 Q 600,45 640,70 Q 670,55 700,80 Z" fill="#ffffff" opacity="0.6" />
+
+      <!-- Floodlight Towers (Left & Right) -->
+      <!-- Left Light Tower -->
+      <g stroke="#ffffff" stroke-width="3" opacity="0.85">
+        <line x1="80" y1="360" x2="100" y2="160" />
+        <line x1="120" y1="360" x2="100" y2="160" />
+        <line x1="85" y1="310" x2="115" y2="310" />
+        <line x1="90" y1="260" x2="110" y2="260" />
+        <line x1="93" y1="210" x2="107" y2="210" />
+        <!-- Light Grid Header -->
+        <rect x="70" y="130" width="60" height="30" rx="4" fill="#1e3a8a" stroke="#ffffff" stroke-width="2" />
+        <!-- Bulbs -->
+        <circle cx="80" cy="140" r="4" fill="#ffffaa" />
+        <circle cx="90" cy="140" r="4" fill="#ffffaa" />
+        <circle cx="100" cy="140" r="4" fill="#ffffaa" />
+        <circle cx="110" cy="140" r="4" fill="#ffffaa" />
+        <circle cx="120" cy="140" r="4" fill="#ffffaa" />
+        <circle cx="80" cy="152" r="4" fill="#ffffaa" />
+        <circle cx="90" cy="152" r="4" fill="#ffffaa" />
+        <circle cx="100" cy="152" r="4" fill="#ffffaa" />
+        <circle cx="110" cy="152" r="4" fill="#ffffaa" />
+        <circle cx="120" cy="152" r="4" fill="#ffffaa" />
+      </g>
+
+      <!-- Right Light Tower -->
+      <g stroke="#ffffff" stroke-width="3" opacity="0.85">
+        <line x1="1080" y1="360" x2="1100" y2="160" />
+        <line x1="1120" y1="360" x2="1100" y2="160" />
+        <line x1="1085" y1="310" x2="1115" y2="310" />
+        <line x1="1090" y1="260" x2="1110" y2="260" />
+        <line x1="1093" y1="210" x2="1107" y2="210" />
+        <rect x="1070" y="130" width="60" height="30" rx="4" fill="#1e3a8a" stroke="#ffffff" stroke-width="2" />
+        <circle cx="1080" cy="140" r="4" fill="#ffffaa" />
+        <circle cx="1090" cy="140" r="4" fill="#ffffaa" />
+        <circle cx="1100" cy="140" r="4" fill="#ffffaa" />
+        <circle cx="1110" cy="140" r="4" fill="#ffffaa" />
+        <circle cx="1120" cy="140" r="4" fill="#ffffaa" />
+        <circle cx="1080" cy="152" r="4" fill="#ffffaa" />
+        <circle cx="1090" cy="152" r="4" fill="#ffffaa" />
+        <circle cx="1100" cy="152" r="4" fill="#ffffaa" />
+        <circle cx="1110" cy="152" r="4" fill="#ffffaa" />
+        <circle cx="1120" cy="152" r="4" fill="#ffffaa" />
+      </g>
+
+      <!-- Stadium Seating Stand Curve -->
+      <path d="M 0,380 Q 600,310 1200,380 L 1200,450 L 0,450 Z" fill="#1d3768" opacity="0.9" />
+      <!-- Crowd Dots Texture -->
+      <path d="M 0,390 Q 600,320 1200,390 L 1200,430 L 0,430 Z" fill="none" stroke="#e0f2fe" stroke-dasharray="3,6" stroke-width="8" opacity="0.4" />
+
+      <!-- Lush Green Field Ground -->
+      <rect y="420" width="1200" height="380" fill="url(#grassGrad)" />
+
+      <!-- Field Mow Lines (Perspective Strips) -->
+      <polygon points="0,480 1200,480 1200,530 0,530" fill="#2d8d09" opacity="0.35" />
+      <polygon points="0,590 1200,590 1200,660 0,660" fill="#2d8d09" opacity="0.35" />
+      <polygon points="0,730 1200,730 1200,800 0,800" fill="#2d8d09" opacity="0.35" />
+
+      <!-- Brown Pitch Patch (Right Perspective) -->
+      <polygon points="450,800 1200,620 1200,800" fill="url(#pitchGrad)" />
+      <!-- Crease Lines on Pitch -->
+      <polygon points="680,740 1150,635 1155,640 683,747" fill="#ffffff" opacity="0.8" />
+      <polygon points="900,750 908,745 1060,788 1052,793" fill="#ffffff" opacity="0.8" />
+
+      <!-- 3D Wickets (Stumps & Bails) on Right Foreground Pitch -->
+      <g id="stumpsGroup" transform="translate(1040, 430)">
+        <!-- Shadow under stumps -->
+        <ellipse cx="60" cy="255" rx="50" ry="12" fill="#000000" opacity="0.35" />
+
+        <!-- Stump 1 (Left) -->
+        <rect x="20" y="30" width="16" height="220" rx="6" fill="url(#woodGrad)" stroke="#8d6614" stroke-width="2" />
+        <!-- Stump 2 (Center) -->
+        <rect x="52" y="25" width="16" height="225" rx="6" fill="url(#woodGrad)" stroke="#8d6614" stroke-width="2" />
+        <!-- Stump 3 (Right) -->
+        <rect x="84" y="20" width="16" height="230" rx="6" fill="url(#woodGrad)" stroke="#8d6614" stroke-width="2" />
+
+        <!-- Bail 1 -->
+        <rect x="16" y="22" width="42" height="10" rx="3" fill="url(#woodGrad)" stroke="#8d6614" stroke-width="1.5" />
+        <!-- Bail 2 -->
+        <rect x="58" y="17" width="44" height="10" rx="3" fill="url(#woodGrad)" stroke="#8d6614" stroke-width="1.5" />
+      </g>
+
+      <!-- Shiny Red Cricket Ball on Pitch -->
+      <g id="cricketBall" transform="translate(970, 630)" filter="url(#shadow)">
+        <!-- Ball Shadow -->
+        <ellipse cx="22" cy="40" rx="20" ry="8" fill="#000000" opacity="0.4" />
+        <!-- Red Sphere -->
+        <circle cx="22" cy="22" r="22" fill="url(#ballGrad)" />
+        <!-- White Seam Curve -->
+        <path d="M 8,10 Q 22,24 36,34" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-dasharray="3,2" opacity="0.85" />
+      </g>
+    </svg>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="relative z-10 w-full max-w-4xl min-h-screen flex flex-col justify-between items-center px-4 py-3 sm:py-5">
+
+    <!-- TOP BAR (Menu Icon Left, Sound Icon Right) -->
+    <div class="w-full flex justify-between items-center">
+      <!-- Menu Button -->
+      <button id="menuBtn" class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#0d224d] border-2 border-[#2b52a1] text-white flex items-center justify-center shadow-lg hover:bg-[#15326d] active:scale-95 transition-transform" aria-label="Menu">
+        <i class="fa-solid fa-bars text-xl"></i>
+      </button>
+
+      <!-- Center Audio Quick Alert Bar (Hidden by default, shown during key events) -->
+      <div id="quickToast" class="hidden px-4 py-1.5 rounded-full bg-blue-900/90 border border-blue-400/50 text-white text-xs sm:text-sm font-semibold tracking-wide shadow-lg animate-bounce">
+        <span id="toastMsg">Welcome to Odd or Even Hand Cricket!</span>
+      </div>
+
+      <!-- Sound Toggle Button -->
+      <button id="soundBtn" class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#0d224d] border-2 border-[#2b52a1] text-white flex items-center justify-center shadow-lg hover:bg-[#15326d] active:scale-95 transition-transform" aria-label="Toggle Sound">
+        <i id="soundIcon" class="fa-solid fa-volume-high text-xl"></i>
+      </button>
+    </div>
+
+    <!-- LOGO & TITLE HEADER SECTION -->
+    <div class="flex flex-col items-center text-center mt-1 sm:mt-2 floating-logo">
+      <!-- 3D Logo Header -->
+      <div class="flex items-center justify-center gap-1 sm:gap-2 tracking-wide font-black text-4xl sm:text-6xl md:text-7xl uppercase select-none">
+        <!-- ODD -->
+        <span class="logo-3d-yellow stroke-text">ODD</span>
+        
+        <!-- Emblem Ball with [OR] -->
+        <div class="relative flex items-center justify-center mx-1">
+          <!-- Small Stumps Behind -->
+          <div class="absolute -top-3 sm:-top-5 flex gap-1 opacity-90">
+            <div class="w-1 sm:w-1.5 h-6 sm:h-10 bg-amber-400 rounded-t"></div>
+            <div class="w-1 sm:w-1.5 h-6 sm:h-10 bg-amber-400 rounded-t"></div>
+            <div class="w-1 sm:w-1.5 h-6 sm:h-10 bg-amber-400 rounded-t"></div>
+          </div>
+          <!-- OR Ball Circle -->
+          <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full logo-or-badge flex items-center justify-center relative z-10">
+            <span class="text-xs sm:text-base font-black text-[#0f2b5c] tracking-tighter">OR</span>
+          </div>
+        </div>
+
+        <!-- EVEN -->
+        <span class="logo-3d-green stroke-text">EVEN</span>
+      </div>
+
+      <!-- HAND CRICKET Ribbon Pill -->
+      <div class="mt-1 sm:mt-2 px-5 py-1 sm:py-1.5 rounded-full bg-[#0a193b] border-2 border-[#224488] shadow-md">
+        <span class="text-white font-extrabold text-sm sm:text-lg tracking-widest uppercase">HAND CRICKET</span>
+      </div>
+
+      <!-- Tagline -->
+      <p id="subTagline" class="text-white text-xs sm:text-sm font-semibold mt-1.5 drop-shadow-md text-blue-100">
+        Choose Odd or Even • Beat the Computer • Score Runs!
+      </p>
+    </div>
+
+    <!-- CENTRAL GAMEPLAY ACTION CONTAINER -->
+    <div class="w-full max-w-lg my-3 sm:my-4 flex flex-col items-center">
+      
+      <!-- Main White Floating Card -->
+      <div class="w-full bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-6 shadow-2xl border-4 border-white/60 relative flex flex-col items-center min-h-[220px] justify-center">
+        
+        <!-- Header Navy Pill Badge -->
+        <div class="absolute -top-4 px-6 py-1.5 rounded-full bg-[#0c1f4a] border-2 border-[#2b52a1] shadow-lg text-white font-bold text-xs sm:text-sm tracking-wide">
+          <span id="cardHeaderTitle">Choose Your Option</span>
+        </div>
+
+        <!-- STAGE 1: TOSS CALL (ODD vs EVEN) -->
+        <div id="tossCallStage" class="w-full flex flex-col sm:flex-row items-center justify-center gap-4 mt-3">
+          <button id="selectOddBtn" class="w-full sm:w-1/2 py-4 sm:py-5 rounded-2xl btn-3d btn-odd text-white font-black text-2xl sm:text-3xl tracking-wider uppercase flex items-center justify-center gap-2">
+            <span>ODD</span>
+          </button>
+          
+          <button id="selectEvenBtn" class="w-full sm:w-1/2 py-4 sm:py-5 rounded-2xl btn-3d btn-even text-white font-black text-2xl sm:text-3xl tracking-wider uppercase flex items-center justify-center gap-2">
+            <span>EVEN</span>
+          </button>
+        </div>
+
+        <!-- STAGE 2: NUMBER SELECTION GRID (1 to 6 Buttons) -->
+        <div id="numberSelectStage" class="hidden w-full flex-col items-center mt-3">
+          <div class="grid grid-cols-6 gap-2 sm:gap-3 w-full">
+            <!-- Num 1 -->
+            <button data-num="1" class="num-play-btn num-btn-1 btn-3d rounded-2xl py-3 sm:py-4 flex flex-col items-center justify-center text-white font-black">
+              <span class="text-xl sm:text-2xl leading-none">1</span>
+              <span class="text-lg sm:text-2xl mt-1 leading-none">☝️</span>
+            </button>
+            <!-- Num 2 -->
+            <button data-num="2" class="num-play-btn num-btn-2 btn-3d rounded-2xl py-3 sm:py-4 flex flex-col items-center justify-center text-white font-black">
+              <span class="text-xl sm:text-2xl leading-none">2</span>
+              <span class="text-lg sm:text-2xl mt-1 leading-none">✌️</span>
+            </button>
+            <!-- Num 3 -->
+            <button data-num="3" class="num-play-btn num-btn-3 btn-3d rounded-2xl py-3 sm:py-4 flex flex-col items-center justify-center text-white font-black">
+              <span class="text-xl sm:text-2xl leading-none">3</span>
+              <span class="text-lg sm:text-2xl mt-1 leading-none">🤟</span>
+            </button>
+            <!-- Num 4 -->
+            <button data-num="4" class="num-play-btn num-btn-4 btn-3d rounded-2xl py-3 sm:py-4 flex flex-col items-center justify-center text-white font-black">
+              <span class="text-xl sm:text-2xl leading-none">4</span>
+              <span class="text-lg sm:text-2xl mt-1 leading-none">🖖</span>
+            </button>
+            <!-- Num 5 -->
+            <button data-num="5" class="num-play-btn num-btn-5 btn-3d rounded-2xl py-3 sm:py-4 flex flex-col items-center justify-center text-white font-black">
+              <span class="text-xl sm:text-2xl leading-none">5</span>
+              <span class="text-lg sm:text-2xl mt-1 leading-none">🖐️</span>
+            </button>
+            <!-- Num 6 -->
+            <button data-num="6" class="num-play-btn num-btn-6 btn-3d rounded-2xl py-3 sm:py-4 flex flex-col items-center justify-center text-white font-black">
+              <span class="text-xl sm:text-2xl leading-none">6</span>
+              <span class="text-lg sm:text-2xl mt-1 leading-none">✋</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STAGE 3: TOSS DECISION (BAT or BOWL) -->
+        <div id="tossDecisionStage" class="hidden w-full flex-col items-center justify-center gap-3 mt-3">
+          <p id="tossWinnerText" class="text-slate-800 font-extrabold text-base sm:text-lg text-center mb-1">
+            You won the toss! Choose your role:
+          </p>
+          <div class="flex w-full gap-3">
+            <button id="chooseBatBtn" class="flex-1 py-3.5 rounded-2xl btn-3d bg-emerald-600 border-2 border-emerald-400 text-white font-black text-lg sm:text-xl shadow-lg">
+              <i class="fa-solid fa-cricket-bat-ball mr-1"></i> BAT FIRST
+            </button>
+            <button id="chooseBowlBtn" class="flex-1 py-3.5 rounded-2xl btn-3d bg-blue-600 border-2 border-blue-400 text-white font-black text-lg sm:text-xl shadow-lg">
+              <i class="fa-solid fa-baseball mr-1"></i> BOWL FIRST
+            </button>
+          </div>
+        </div>
+
+        <!-- REVEAL ANIMATION AREA (Shows last thrown hands during match) -->
+        <div id="throwRevealArea" class="hidden w-full mt-3 pt-3 border-t border-slate-200 flex items-center justify-around">
+          <!-- Player Hand Throw -->
+          <div class="flex flex-col items-center">
+            <span class="text-xs font-bold text-slate-500 uppercase">You Threw</span>
+            <div id="playerThrowDisplay" class="text-3xl sm:text-4xl mt-1 hand-throw">
+              <span>☝️</span>
+            </div>
+            <span id="playerThrowVal" class="text-sm font-black text-blue-600 mt-1">1</span>
+          </div>
+
+          <div class="text-center font-black text-slate-400 text-lg">VS</div>
+
+          <!-- CPU Hand Throw -->
+          <div class="flex flex-col items-center">
+            <span class="text-xs font-bold text-slate-500 uppercase">Computer Threw</span>
+            <div id="cpuThrowDisplay" class="text-3xl sm:text-4xl mt-1 hand-throw">
+              <span>🤖</span>
+            </div>
+            <span id="cpuThrowVal" class="text-sm font-black text-cyan-600 mt-1">1</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SCOREBOARD CAPSULE BAR (Floating Dark Navy Capsule directly inspired by reference) -->
+      <div class="w-full mt-4 rounded-3xl score-capsule p-3 sm:p-4 text-white flex items-center justify-between">
+        
+        <!-- YOU (Left Avatar & Score) -->
+        <div class="flex items-center gap-2.5 sm:gap-3 flex-1 justify-start">
+          <!-- Avatar Icon -->
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-500 border-2 border-emerald-300 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-md">
+            <span class="text-xl sm:text-2xl">👦</span>
+          </div>
+          <!-- Label & Score -->
+          <div class="flex flex-col">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs sm:text-sm font-bold text-slate-300">You</span>
+              <span id="userRoleBadge" class="hidden text-[10px] bg-emerald-600 px-1.5 py-0.5 rounded text-white font-bold">BAT</span>
+            </div>
+            <div class="flex items-baseline gap-1">
+              <span id="userScoreText" class="text-xl sm:text-2xl font-black text-white">0 / 0</span>
+              <span id="userWktText" class="text-xs sm:text-sm font-medium text-slate-300">wkts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DIVIDER 1 -->
+        <div class="w-px h-10 bg-slate-700/80 mx-2"></div>
+
+        <!-- CENTER ROUND / OVER TRACKER -->
+        <div class="flex flex-col items-center justify-center px-1 text-center min-w-[80px]">
+          <span class="text-[10px] sm:text-xs font-extrabold uppercase text-slate-400 tracking-wider">ROUND</span>
+          <span id="roundNumText" class="text-lg sm:text-2xl font-black text-amber-400 leading-tight">1</span>
+          <span id="maxRoundText" class="text-[10px] sm:text-xs font-semibold text-slate-400">of 5</span>
+        </div>
+
+        <!-- DIVIDER 2 -->
+        <div class="w-px h-10 bg-slate-700/80 mx-2"></div>
+
+        <!-- COMPUTER (Right Avatar & Score) -->
+        <div class="flex items-center gap-2.5 sm:gap-3 flex-1 justify-end text-right">
+          <!-- Label & Score -->
+          <div class="flex flex-col items-end">
+            <div class="flex items-center gap-1.5">
+              <span id="cpuRoleBadge" class="hidden text-[10px] bg-blue-600 px-1.5 py-0.5 rounded text-white font-bold">BOWL</span>
+              <span class="text-xs sm:text-sm font-bold text-slate-300">Computer</span>
+            </div>
+            <div class="flex items-baseline gap-1">
+              <span id="cpuScoreText" class="text-xl sm:text-2xl font-black text-white">0 / 0</span>
+              <span id="cpuWktText" class="text-xs sm:text-sm font-medium text-slate-300">wkts</span>
+            </div>
+          </div>
+          <!-- Avatar Icon -->
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-cyan-500 border-2 border-cyan-300 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-md">
+            <span class="text-xl sm:text-2xl">🤖</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- BOTTOM TARGET BADGE (Bottom Left Trophy Pill matching image) -->
+    <div class="w-full flex justify-start items-center mb-1 sm:mb-2">
+      <div class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl bg-[#091838]/90 border-2 border-[#1e3e8a] shadow-xl flex items-center gap-3 backdrop-blur-sm">
+        <!-- Trophy Icon -->
+        <div class="text-2xl sm:text-3xl text-yellow-400 drop-shadow">
+          🏆
+        </div>
+        <!-- Target Info -->
+        <div class="flex flex-col">
+          <span id="targetBadgeTitle" class="text-xs sm:text-sm font-black text-white leading-tight">First to score target</span>
+          <span id="targetBadgeSubtitle" class="text-[10px] sm:text-xs font-bold text-blue-300">wins the game!</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL 1: GAME OVER / RESULT OVERLAY -->
+  <div id="gameOverModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden pop-in">
+    <div class="bg-[#0e214d] border-4 border-[#2b52a1] rounded-3xl p-6 max-w-md w-full text-center text-white shadow-2xl relative flex flex-col items-center">
+      <!-- Winner Trophy Animation -->
+      <div id="modalResultEmoji" class="text-6xl mb-2 animate-bounce">🏆</div>
+      <h2 id="modalResultTitle" class="text-3xl font-black text-amber-400 mb-1">VICTORY!</h2>
+      <p id="modalResultDesc" class="text-base font-semibold text-blue-100 mb-4">You beat the Computer by 12 runs!</p>
+
+      <!-- Match Stats Card -->
+      <div class="w-full bg-[#08132e] rounded-2xl p-4 border border-blue-900/60 mb-5 text-left text-sm space-y-2">
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400 font-semibold">Your Final Score:</span>
+          <span id="modalUserFinal" class="font-bold text-emerald-400">0 runs</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400 font-semibold">Computer Score:</span>
+          <span id="modalCpuFinal" class="font-bold text-cyan-400">0 runs</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400 font-semibold">Total Overs/Rounds:</span>
+          <span id="modalRoundsPlayed" class="font-bold text-amber-300">5 Rounds</span>
+        </div>
+      </div>
+
+      <!-- Play Again Button -->
+      <button id="restartGameBtn" class="w-full py-4 rounded-2xl btn-3d bg-emerald-600 border-2 border-emerald-400 text-white font-black text-xl shadow-lg uppercase">
+        Play Again <i class="fa-solid fa-rotate-right ml-2"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 2: HOW TO PLAY / MENU MODAL -->
+  <div id="menuModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0d224d] border-3 border-[#2b52a1] rounded-3xl p-6 max-w-md w-full text-white shadow-2xl relative">
+      <!-- Close Button -->
+      <button id="closeMenuBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h2 class="text-2xl font-black text-amber-400 mb-3 flex items-center gap-2">
+        <i class="fa-solid fa-circle-question"></i> How To Play
+      </h2>
+
+      <div class="space-y-3 text-sm text-slate-200 overflow-y-auto max-h-[60vh] pr-1">
+        <div class="p-3 bg-blue-950/60 rounded-xl border border-blue-800/40">
+          <span class="font-bold text-amber-300 block mb-1">1. The Toss</span>
+          Call <strong>ODD</strong> or <strong>EVEN</strong>, then choose a finger number (1 to 6). If the sum of your number and the computer's number matches your call, you win the toss!
+        </div>
+
+        <div class="p-3 bg-blue-950/60 rounded-xl border border-blue-800/40">
+          <span class="font-bold text-emerald-300 block mb-1">2. Scoring Runs (Batting)</span>
+          Tap any finger count from 1 to 6. If your number is <strong>different</strong> from the bowler's, you add that many runs to your score!
+        </div>
+
+        <div class="p-3 bg-blue-950/60 rounded-xl border border-blue-800/40">
+          <span class="font-bold text-rose-300 block mb-1">3. Getting OUT</span>
+          If both you and the computer throw the <strong>SAME number</strong> on the same turn, the batter is <strong>OUT!</strong>
+        </div>
+
+        <div class="p-3 bg-blue-950/60 rounded-xl border border-blue-800/40">
+          <span class="font-bold text-cyan-300 block mb-1">4. Winning the Match</span>
+          Each match lasts up to 5 rounds (or until a wicket falls). The team chasing in the second innings must beat the target score to win!
+        </div>
+      </div>
+
+      <button id="gotItBtn" class="w-full mt-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-white uppercase text-center">
+        Got It!
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* Web Audio API Sound Generator (No external MP3 files needed) */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTap() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.08);
+
+        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+
+      playRunScore() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // C5
+        osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08); // E5
+        osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.16); // G5
+
+        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.25);
+      }
+
+      playOut() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(90, this.ctx.currentTime + 0.4);
+
+        gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.4);
+      }
+
+      playWin() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + i * 0.12);
+
+          gain.gain.setValueAtTime(0.3, this.ctx.currentTime + i * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.12 + 0.25);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(this.ctx.currentTime + i * 0.12);
+          osc.stop(this.ctx.currentTime + i * 0.12 + 0.25);
+        });
+      }
+    }
+
+    const sounds = new SoundEngine();
+  </script>
+
+  <script>
+    /* Hand Cricket Game Logic Controller */
+    const HandEmojiMap = {
+      1: '☝️',
+      2: '✌️',
+      3: '🤟',
+      4: '🖖',
+      5: '🖐️',
+      6: '✋'
+    };
+
+    // Game States
+    const STATE = {
+      TOSS_CALL: 'TOSS_CALL',
+      TOSS_PLAY: 'TOSS_PLAY',
+      TOSS_DECISION: 'TOSS_DECISION',
+      MATCH_PLAY: 'MATCH_PLAY',
+      GAME_OVER: 'GAME_OVER'
+    };
+
+    let currentState = STATE.TOSS_CALL;
+    
+    // Game Variable Parameters
+    let userTossCall = 'odd'; // 'odd' or 'even'
+    let tossWinner = null;   // 'user' or 'cpu'
+    
+    let userRole = 'batting'; // 'batting' or 'bowling'
+    let cpuRole = 'bowling';
+    
+    let currentInnings = 1;  // 1 or 2
+    let roundNum = 1;
+    const MAX_ROUNDS = 5;
+
+    let userScore = 0;
+    let userWickets = 0;
+    
+    let cpuScore = 0;
+    let cpuWickets = 0;
+
+    let targetScore = null;
+
+    /* DOM Elements references */
+    const cardHeaderTitle = document.getElementById('cardHeaderTitle');
+    const tossCallStage = document.getElementById('tossCallStage');
+    const numberSelectStage = document.getElementById('numberSelectStage');
+    const tossDecisionStage = document.getElementById('tossDecisionStage');
+    const tossWinnerText = document.getElementById('tossWinnerText');
+    const throwRevealArea = document.getElementById('throwRevealArea');
+
+    const selectOddBtn = document.getElementById('selectOddBtn');
+    const selectEvenBtn = document.getElementById('selectEvenBtn');
+    const chooseBatBtn = document.getElementById('chooseBatBtn');
+    const chooseBowlBtn = document.getElementById('chooseBowlBtn');
+
+    const userScoreText = document.getElementById('userScoreText');
+    const userWktText = document.getElementById('userWktText');
+    const cpuScoreText = document.getElementById('cpuScoreText');
+    const cpuWktText = document.getElementById('cpuWktText');
+    
+    const userRoleBadge = document.getElementById('userRoleBadge');
+    const cpuRoleBadge = document.getElementById('cpuRoleBadge');
+    
+    const roundNumText = document.getElementById('roundNumText');
+    const maxRoundText = document.getElementById('maxRoundText');
+
+    const targetBadgeTitle = document.getElementById('targetBadgeTitle');
+    const targetBadgeSubtitle = document.getElementById('targetBadgeSubtitle');
+    const subTagline = document.getElementById('subTagline');
+
+    const playerThrowDisplay = document.getElementById('playerThrowDisplay');
+    const playerThrowVal = document.getElementById('playerThrowVal');
+    const cpuThrowDisplay = document.getElementById('cpuThrowDisplay');
+    const cpuThrowVal = document.getElementById('cpuThrowVal');
+
+    const quickToast = document.getElementById('quickToast');
+    const toastMsg = document.getElementById('toastMsg');
+
+    // Modals
+    const gameOverModal = document.getElementById('gameOverModal');
+    const menuModal = document.getElementById('menuModal');
+    const menuBtn = document.getElementById('menuBtn');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const gotItBtn = document.getElementById('gotItBtn');
+    const soundBtn = document.getElementById('soundBtn');
+    const soundIcon = document.getElementById('soundIcon');
+    const restartGameBtn = document.getElementById('restartGameBtn');
+
+    // Helper to show Quick Toast Alert
+    function showToast(msg) {
+      toastMsg.innerText = msg;
+      quickToast.classList.remove('hidden');
+      setTimeout(() => {
+        quickToast.classList.add('hidden');
+      }, 3000);
+    }
+
+    // Toggle Sound
+    soundBtn.addEventListener('click', () => {
+      sounds.muted = !sounds.muted;
+      if (sounds.muted) {
+        soundIcon.className = 'fa-solid fa-volume-xmark text-xl text-rose-400';
+        showToast("Muted Audio");
+      } else {
+        soundIcon.className = 'fa-solid fa-volume-high text-xl';
+        sounds.playTap();
+        showToast("Audio On");
+      }
+    });
+
+    // Menu Modals
+    menuBtn.addEventListener('click', () => {
+      sounds.playTap();
+      menuModal.classList.remove('hidden');
+    });
+    closeMenuBtn.addEventListener('click', () => {
+      sounds.playTap();
+      menuModal.classList.add('hidden');
+    });
+    gotItBtn.addEventListener('click', () => {
+      sounds.playTap();
+      menuModal.classList.add('hidden');
+    });
+
+    // Reset / Init Game
+    function initGame() {
+      currentState = STATE.TOSS_CALL;
+      userTossCall = 'odd';
+      tossWinner = null;
+      userRole = 'batting';
+      cpuRole = 'bowling';
+      currentInnings = 1;
+      roundNum = 1;
+      userScore = 0;
+      userWickets = 0;
+      cpuScore = 0;
+      cpuWickets = 0;
+      targetScore = null;
+
+      // Update UI
+      cardHeaderTitle.innerText = "Choose Your Option";
+      tossCallStage.classList.remove('hidden');
+      numberSelectStage.classList.add('hidden');
+      tossDecisionStage.classList.add('hidden');
+      throwRevealArea.classList.add('hidden');
+      
+      userScoreText.innerText = "0 / 0";
+      cpuScoreText.innerText = "0 / 0";
+      userRoleBadge.classList.add('hidden');
+      cpuRoleBadge.classList.add('hidden');
+      
+      roundNumText.innerText = "1";
+      maxRoundText.innerText = `of ${MAX_ROUNDS}`;
+
+      targetBadgeTitle.innerText = "First to score target";
+      targetBadgeSubtitle.innerText = "wins the game!";
+      subTagline.innerText = "Choose Odd or Even • Beat the Computer • Score Runs!";
+
+      gameOverModal.classList.add('hidden');
+    }
+
+    /* STEP 1: SELECT ODD OR EVEN FOR TOSS */
+    selectOddBtn.addEventListener('click', () => handleTossCall('odd'));
+    selectEvenBtn.addEventListener('click', () => handleTossCall('even'));
+
+    function handleTossCall(call) {
+      sounds.playTap();
+      userTossCall = call;
+      currentState = STATE.TOSS_PLAY;
+
+      tossCallStage.classList.add('hidden');
+      numberSelectStage.classList.remove('hidden');
+      cardHeaderTitle.innerText = `Toss: Throw Number for ${call.toUpperCase()}`;
+      showToast(`You picked ${call.toUpperCase()}! Throw a finger number 1-6.`);
+    }
+
+    /* STEP 2: NUMBER BUTTON TAPS (HANDLES BOTH TOSS THROW & MATCH PLAY) */
+    document.querySelectorAll('.num-play-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const num = parseInt(btn.getAttribute('data-num'));
+        sounds.playTap();
+
+        if (currentState === STATE.TOSS_PLAY) {
+          executeTossPlay(num);
+        } else if (currentState === STATE.MATCH_PLAY) {
+          executeMatchTurn(num);
+        }
+      });
+    });
+
+    /* EXECUTE TOSS THROW */
+    function executeTossPlay(userNum) {
+      const cpuNum = Math.floor(Math.random() * 6) + 1;
+      const sum = userNum + cpuNum;
+      const isEven = sum % 2 === 0;
+      const tossResultType = isEven ? 'even' : 'odd';
+
+      // Update Reveal Area
+      throwRevealArea.classList.remove('hidden');
+      playerThrowDisplay.innerHTML = `<span>${HandEmojiMap[userNum]}</span>`;
+      playerThrowVal.innerText = userNum;
+      cpuThrowDisplay.innerHTML = `<span>${HandEmojiMap[cpuNum]}</span>`;
+      cpuThrowVal.innerText = cpuNum;
+
+      if (tossResultType === userTossCall) {
+        // User Wins Toss
+        tossWinner = 'user';
+        currentState = STATE.TOSS_DECISION;
+        numberSelectStage.classList.add('hidden');
+        tossDecisionStage.classList.remove('hidden');
+        
+        cardHeaderTitle.innerText = "Toss Won!";
+        tossWinnerText.innerText = `Sum is ${sum} (${tossResultType.toUpperCase()})! You won the toss! Choose to Bat or Bowl:`;
+        sounds.playWin();
+      } else {
+        // CPU Wins Toss
+        tossWinner = 'cpu';
+        const cpuDecision = Math.random() < 0.5 ? 'batting' : 'bowling';
+        userRole = cpuDecision === 'batting' ? 'bowling' : 'batting';
+        cpuRole = cpuDecision;
+
+        tossWinnerText.innerText = `Sum is ${sum} (${tossResultType.toUpperCase()}). Computer won toss and chose to ${cpuDecision.toUpperCase()}!`;
+        showToast(`Computer won toss and chose to ${cpuDecision.toUpperCase()}!`);
+        
+        setTimeout(() => {
+          startMatchPhase();
+        }, 1500);
+      }
+    }
+
+    /* TOSS DECISION BUTTONS */
+    chooseBatBtn.addEventListener('click', () => {
+      sounds.playTap();
+      userRole = 'batting';
+      cpuRole = 'bowling';
+      startMatchPhase();
+    });
+
+    chooseBowlBtn.addEventListener('click', () => {
+      sounds.playTap();
+      userRole = 'bowling';
+      cpuRole = 'batting';
+      startMatchPhase();
+    });
+
+    /* START MATCH PHASE */
+    function startMatchPhase() {
+      currentState = STATE.MATCH_PLAY;
+      tossDecisionStage.classList.add('hidden');
+      numberSelectStage.classList.remove('hidden');
+
+      updateRoleBadges();
+      cardHeaderTitle.innerText = `Innings 1: You are ${userRole.toUpperCase()}`;
+      subTagline.innerText = `Innings 1 • You are ${userRole === 'batting' ? 'Batting 🏏' : 'Bowling ⚾'}!`;
+    }
+
+    function updateRoleBadges() {
+      userRoleBadge.classList.remove('hidden');
+      cpuRoleBadge.classList.remove('hidden');
+
+      if (userRole === 'batting') {
+        userRoleBadge.innerText = 'BAT';
+        userRoleBadge.className = 'text-[10px] bg-emerald-600 px-1.5 py-0.5 rounded text-white font-bold';
+        cpuRoleBadge.innerText = 'BOWL';
+        cpuRoleBadge.className = 'text-[10px] bg-blue-600 px-1.5 py-0.5 rounded text-white font-bold';
+      } else {
+        userRoleBadge.innerText = 'BOWL';
+        userRoleBadge.className = 'text-[10px] bg-blue-600 px-1.5 py-0.5 rounded text-white font-bold';
+        cpuRoleBadge.innerText = 'BAT';
+        cpuRoleBadge.className = 'text-[10px] bg-emerald-600 px-1.5 py-0.5 rounded text-white font-bold';
+      }
+    }
+
+    /* EXECUTE MATCH TURN */
+    function executeMatchTurn(userNum) {
+      const cpuNum = Math.floor(Math.random() * 6) + 1;
+
+      // Animate thrown hands
+      throwRevealArea.classList.remove('hidden');
+      playerThrowDisplay.innerHTML = `<span class="hand-throw">${HandEmojiMap[userNum]}</span>`;
+      playerThrowVal.innerText = userNum;
+      cpuThrowDisplay.innerHTML = `<span class="hand-throw">${HandEmojiMap[cpuNum]}</span>`;
+      cpuThrowVal.innerText = cpuNum;
+
+      const isOut = (userNum === cpuNum);
+
+      if (isOut) {
+        sounds.playOut();
+        handleDismissal();
+      } else {
+        sounds.playRunScore();
+        if (userRole === 'batting') {
+          userScore += userNum;
+          showToast(`You scored ${userNum} runs! 🏏`);
+        } else {
+          cpuScore += cpuNum;
+          showToast(`Computer scored ${cpuNum} runs! ⚾`);
+        }
+        updateScoreboard();
+        checkInningsProgress();
+      }
+    }
+
+    /* HANDLE OUT / DISMISSAL */
+    function handleDismissal() {
+      if (userRole === 'batting') {
+        userWickets += 1;
+      } else {
+        cpuWickets += 1;
+      }
+      updateScoreboard();
+
+      if (currentInnings === 1) {
+        // End Innings 1
+        const firstInningsScore = (userRole === 'batting') ? userScore : cpuScore;
+        targetScore = firstInningsScore + 1;
+
+        showToast(`OUT! Innings 1 over. Target: ${targetScore} runs!`);
+
+        // Swap Innings
+        currentInnings = 2;
+        roundNum = 1;
+        userRole = (userRole === 'batting') ? 'bowling' : 'batting';
+        cpuRole = (cpuRole === 'batting') ? 'bowling' : 'batting';
+
+        updateRoleBadges();
+        targetBadgeTitle.innerText = `Target: ${targetScore} runs`;
+        targetBadgeSubtitle.innerText = `${userRole === 'batting' ? 'You need ' + targetScore + ' runs' : 'Defend ' + firstInningsScore + ' runs'}`;
+        
+        cardHeaderTitle.innerText = `Innings 2: Target ${targetScore} Runs`;
+      } else {
+        // Innings 2 Out -> End Match
+        showToast(`OUT! Second Innings Concluded.`);
+        finishGame();
+      }
+    }
+
+    /* CHECK INNINGS PROGRESS BY ROUNDS OR TARGET */
+    function checkInningsProgress() {
+      // Check 2nd Innings Target Chased
+      if (currentInnings === 2 && targetScore !== null) {
+        const chasingScore = (userRole === 'batting') ? userScore : cpuScore;
+        if (chasingScore >= targetScore) {
+          finishGame();
+          return;
+        }
+      }
+
+      // Increment Round
+      roundNum += 1;
+      if (roundNum > MAX_ROUNDS) {
+        if (currentInnings === 1) {
+          // Innings 1 completed MAX_ROUNDS
+          const firstInningsScore = (userRole === 'batting') ? userScore : cpuScore;
+          targetScore = firstInningsScore + 1;
+
+          showToast(`Innings 1 Completed (${MAX_ROUNDS} Rounds). Target: ${targetScore}!`);
+
+          currentInnings = 2;
+          roundNum = 1;
+          userRole = (userRole === 'batting') ? 'bowling' : 'batting';
+          cpuRole = (cpuRole === 'batting') ? 'bowling' : 'batting';
+
+          updateRoleBadges();
+          targetBadgeTitle.innerText = `Target: ${targetScore} runs`;
+          targetBadgeSubtitle.innerText = `${userRole === 'batting' ? 'You need ' + targetScore + ' runs' : 'Defend ' + firstInningsScore + ' runs'}`;
+          cardHeaderTitle.innerText = `Innings 2: Target ${targetScore} Runs`;
+        } else {
+          // Innings 2 completed MAX_ROUNDS
+          finishGame();
+        }
+      }
+
+      roundNumText.innerText = roundNum;
+    }
+
+    function updateScoreboard() {
+      userScoreText.innerText = `${userScore} / ${userWickets}`;
+      cpuScoreText.innerText = `${cpuScore} / ${cpuWickets}`;
+    }
+
+    /* FINISH GAME & DISPLAY RESULTS MODAL */
+    function finishGame() {
+      currentState = STATE.GAME_OVER;
+      sounds.playWin();
+
+      const modalResultEmoji = document.getElementById('modalResultEmoji');
+      const modalResultTitle = document.getElementById('modalResultTitle');
+      const modalResultDesc = document.getElementById('modalResultDesc');
+      const modalUserFinal = document.getElementById('modalUserFinal');
+      const modalCpuFinal = document.getElementById('modalCpuFinal');
+      const modalRoundsPlayed = document.getElementById('modalRoundsPlayed');
+
+      modalUserFinal.innerText = `${userScore} runs (${userWickets} wkts)`;
+      modalCpuFinal.innerText = `${cpuScore} runs (${cpuWickets} wkts)`;
+      modalRoundsPlayed.innerText = `${MAX_ROUNDS} Rounds`;
+
+      if (userScore > cpuScore) {
+        modalResultEmoji.innerText = '🏆';
+        modalResultTitle.innerText = 'VICTORY!';
+        modalResultTitle.className = 'text-3xl font-black text-amber-400 mb-1';
+        modalResultDesc.innerText = `Congratulations! You defeated the Computer by ${userScore - cpuScore} runs!`;
+      } else if (cpuScore > userScore) {
+        modalResultEmoji.innerText = '🤖';
+        modalResultTitle.innerText = 'DEFEAT!';
+        modalResultTitle.className = 'text-3xl font-black text-rose-400 mb-1';
+        modalResultDesc.innerText = `Computer won by ${cpuScore - userScore} runs! Better luck next time!`;
+      } else {
+        modalResultEmoji.innerText = '🤝';
+        modalResultTitle.innerText = 'MATCH TIED!';
+        modalResultTitle.className = 'text-3xl font-black text-cyan-400 mb-1';
+        modalResultDesc.innerText = `It's a tie! Both scored ${userScore} runs!`;
+      }
+
+      gameOverModal.classList.remove('hidden');
+    }
+
+    restartGameBtn.addEventListener('click', () => {
+      sounds.playTap();
+      initGame();
+    });
+
+    // Initialize Game on Load
+    window.addEventListener('load', () => {
+      initGame();
+    });
+  </script>
+</body>
+</html>
